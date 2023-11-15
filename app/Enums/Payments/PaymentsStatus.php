@@ -2,7 +2,7 @@
 
 namespace App\Enums\Payments;
 
-use App\Enums\Interfaces\StringableEnum;
+use App\Enums\StringableEnum;
 
 enum PaymentsStatus: string implements StringableEnum
 {

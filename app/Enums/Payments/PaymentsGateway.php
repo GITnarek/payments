@@ -2,12 +2,12 @@
 
 namespace App\Enums\Payments;
 
-use App\Enums\Interfaces\StringableEnum;
+use App\Enums\StringableEnum;
 
 enum PaymentsGateway: string implements StringableEnum
 {
-    case GATEWAY1 = 'gateway1';
-    case GATEWAY2 = 'gateway2';
+    case GATEWAY_ONE = 'gateway_1';
+    case GATEWAY_TWO = 'gateway_2';
 
     /**
      * @return string

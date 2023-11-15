@@ -2,34 +2,41 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\CheckAuthorization;
+use App\DTO\GatewayTwoDTO;
+use App\Services\GatewayTwo\CheckAuthorization;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class GatewayTwoController extends Controller
 {
-
     /**
      * @param CheckAuthorization $checkAuthorization
      */
-    public function __construct(private readonly CheckAuthorization $checkAuthorization)
+    public function __construct(
+        private CheckAuthorization $checkAuthorization
+    )
     {
     }
 
     /**
-     * @param Request $request
      * @return JsonResponse
-     * @throws \Exception
      */
-    public function handleCallback(Request $request): JsonResponse
+    public function handleCallback(): JsonResponse
     {
-        $requestData = $request->all();
-        $authHeader = $request->header('authorization');
+        $gatewayTwoDto = new GatewayTwoDTO(
+            request('project') ?? null,
+            request('invoice') ?? null,
+            request('status') ?? null,
+            request('amount') ?? null,
+            request('amount_paid') ?? null,
+            request('rand') ?? null,
+        );
+
+        $authHeader = request()->header('authorization');
 
         try {
-            $this->checkAuthorization->process($requestData, $authHeader);
+            $this->checkAuthorization->process($gatewayTwoDto->toArray(), $authHeader);
         } catch (Throwable $e) {
             Log::error('GatewayTwoController: ' . $e->getMessage());
             return response()->json(['error' => 'Something went wrong'], 401);

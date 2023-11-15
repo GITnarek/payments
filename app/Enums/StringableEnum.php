@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Enums\Interfaces;
+namespace App\Enums;
 
 interface StringableEnum
 {

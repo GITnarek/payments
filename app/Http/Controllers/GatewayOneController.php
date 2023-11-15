@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\Helpers\EnumHelper;
-use App\Enums\Payments\PaymentsGateway;
-use App\Models\Transactions;
-use App\Services\CheckSignature;
+use App\DTO\GatewayOneDTO;
+use App\Services\GatewayOne\CheckSignature;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -17,19 +14,30 @@ class GatewayOneController extends Controller
     /**
      * @param CheckSignature $checkSignature
      */
-    public function __construct(private readonly CheckSignature $checkSignature)
+    public function __construct(
+        private CheckSignature $checkSignature
+    )
     {
     }
+
     /**
-     * @param Request $request
      * @return JsonResponse
      */
-    public function handleCallback(Request $request): JsonResponse
+    public function handleCallback(): JsonResponse
     {
-        $requestData = $request->all();
+        $gatewayOneDto = new GatewayOneDTO(
+            request('merchant_id') ?? null,
+            request('payment_id') ?? null,
+            request('status') ?? null,
+            request('amount') ?? null,
+            request('amount_paid') ?? null,
+            request('timestamp') ?? null,
+            request('sign') ?? null,
+        );
 
         try {
-            $this->checkSignature->process($requestData);
+            $this->checkSignature->process($gatewayOneDto);
+            $this->checkSignature->create($gatewayOneDto);
         } catch (Throwable $e) {
             Log::error('GatewayOneController: ' . $e->getMessage());
             return response()->json(['error' => 'Something went wrong'], 400);

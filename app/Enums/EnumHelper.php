@@ -1,8 +1,6 @@
 <?php
 
-namespace App\Enums\Helpers;
-
-use App\Enums\Interfaces\StringableEnum;
+namespace App\Enums;
 
 class EnumHelper
 {

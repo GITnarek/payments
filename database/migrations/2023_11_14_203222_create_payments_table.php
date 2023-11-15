@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\Helpers\EnumHelper;
+use App\Enums\EnumHelper;
 use App\Enums\Payments\PaymentsGateway;
 use App\Enums\Payments\PaymentsStatus;
 use Illuminate\Database\Migrations\Migration;
@@ -16,14 +16,17 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('payer_id');
+            $table->unsignedBigInteger('merchant_id');
             $table->unsignedInteger('payment_id');
-            $table->enum('gateways', EnumHelper::values(PaymentsGateway::cases()));
+            $table->unsignedInteger('gateway_id');
             $table->enum('status', EnumHelper::values(PaymentsStatus::cases()));
-            $table->unsignedDecimal('amount');
-            $table->unsignedDecimal('amount_paid');
+            $table->unsignedInteger('amount')->default(0);
+            $table->unsignedInteger('amount_paid')->default(0);
             $table->timestamps();
-            $table->foreign('merchant_id')->references('id')->on('users');
+
+            $table->foreign('gateway_id')
+                ->references('id')
+                ->on('gateways');
         });
     }
 
